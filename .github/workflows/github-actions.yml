@@ -8,22 +8,27 @@ jobs:
   deployment:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: checkout
         uses: actions/checkout@v2
 
-      - name: Setup node
+      - name: setup node
         uses: actions/setup-node@v3
         with:
           node-version: "lts/*"
           cache: yarn
 
-      - name: Build
+      - name: install dependencies
+        run: yarn
+
+      - name: lint
+        run: yarn lint
+
+      - name: build
         run: |
-          yarn
           yarn build
           yarn export
 
-      - name: Deploy
+      - name: deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
           deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
