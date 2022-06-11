@@ -1,7 +1,8 @@
 name: deploy-workflow
 on:
   push:
-    - 'main'
+    branches:
+      - 'main'
 
 jobs:
   lint:
