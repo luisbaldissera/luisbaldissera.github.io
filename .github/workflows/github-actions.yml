@@ -5,24 +5,26 @@ on:
       - 'main'
 
 jobs:
-  lint:
+  deployment:
+    runs-on: ubuntu-latest
     steps:
-      - yarn lint
-  build:
-    steps:
-      - yarn build
-      - yarn export
-  deploy:
-    steps:
-      - touch out/.nojekyll 
-      - git add -f out 
-      - git commit -m '(workflow) deploy' 
-      - git subtree push --prefix out origin gh-pages 
-  clean:
-    steps:
-      - rm -r out/ 
-      - git add -f out/ 
-      - git commit -m '(workflow) clean'
+      - name: Checkout
+        uses: actions/checkout@v2
 
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: "lts/*"
+          cache: yarn
 
+      - name: Build
+        run: |
+          yarn
+          yarn build
+          yarn export
 
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+          publish_dir: ./out
